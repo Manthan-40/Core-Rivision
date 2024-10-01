@@ -1,0 +1,23 @@
+﻿{
+  "suppressINotifyPattern": true,
+  "suppressGeneratedCodeAttribute": true,
+  "language": "CS",
+  "namespace": "ExampleProject",
+  "serviceContextName": "OrgContext",
+  "generateSdkMessages": true,
+  "generateGlobalOptionSets": false,
+  "emitFieldsClasses": false,
+  "entityTypesFolder": "Entities",
+  "messagesTypesFolder": "Messages",
+  "optionSetsTypesFolder": "OptionSets",
+  "entityNamesFilter": [
+    "lead"
+  ],
+  "messageNamesFilter": [
+    "searchautocomplete",
+    "searchquery",
+    "sample_*"
+  ],
+  "emitEntityETC": false,
+  "emitVirtualAttributes": false
+}
