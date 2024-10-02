@@ -8,9 +8,11 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using Microsoft.Crm.Sdk.Messages;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RevisioneNew.Controllers
 {
+    [Authorize]
     public class LeadController : Controller
     {
         //private readonly GraphServiceClient _graphServiceClient;

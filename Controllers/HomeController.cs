@@ -7,6 +7,7 @@ using Microsoft.Identity.Web;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using System.Security.Claims;
 
 namespace RevisioneNew.Controllers
 {
@@ -27,6 +28,7 @@ namespace RevisioneNew.Controllers
         [AuthorizeForScopes(ScopeKeySection = "MicrosoftGraph:Scopes")]
         public IActionResult Index()
         {
+            var userClaims = User.Identity;
             ViewBag.Home = "active";
             return View();
         }
