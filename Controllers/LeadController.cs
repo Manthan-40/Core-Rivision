@@ -34,7 +34,7 @@ namespace RevisioneNew.Controllers
                 {
                     TopicName = item.GetAttributeValue<string>("subject"),
                     FullName = item.GetAttributeValue<string>("fullname"),
-                    Status = ((StateCode)item.GetAttributeValue<OptionSetValue>("statecode").Value).ToString(),
+                    Status = ((LeadStateCode)item.GetAttributeValue<OptionSetValue>("statecode").Value).ToString(),
                     CreatedON = item.GetAttributeValue<DateTime>("createdon"),
                     Id = item.GetAttributeValue<Guid>("leadid")
                 });
@@ -82,19 +82,58 @@ namespace RevisioneNew.Controllers
             return View();
         }
 
+        [HttpPost]
         public IActionResult LeadQualification(string leadId) {
-
-            if (leadId != null)
+            try
             {
-                Guid leadID = new Guid(leadId);
+                if (leadId != null)
+                {
+                    Guid leadID = new Guid(leadId);
 
-                QualifyLeadRequest request = new QualifyLeadRequest();
-                request.LeadId = new EntityReference("lead", leadID);
-                request.Status = new OptionSetValue(((int)LeadStateCode.Qualified));
-                request.CreateOpportunity = true;
-                return Ok("success");
+                    QualifyLeadRequest request = new QualifyLeadRequest();
+                    request.LeadId = new EntityReference("lead", leadID);
+                    request.Status = new OptionSetValue(-1);
+                    request.CreateOpportunity = false;
+                    request.CreateAccount = false;
+                    request.CreateContact = false;
+
+                    QualifyLeadResponse response = (QualifyLeadResponse)_serviceClient.Execute(request);
+                    return Ok("Lead is sucessfully qualified.");
+                }
+                return BadRequest("Lead is not found");
             }
-                return BadRequest();
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
+
+
+        [HttpPost]
+        public IActionResult LeadDisqualification(string leadId)
+        {
+            try
+            {
+                if (leadId != null)
+                {
+                    Guid leadID = new Guid(leadId);
+
+                    SetStateRequest disqualificationRequest = new SetStateRequest();
+                    disqualificationRequest.EntityMoniker = new EntityReference("lead", leadID);
+                    disqualificationRequest.State = new OptionSetValue(((int)LeadStateCode.Disqualified));
+                    disqualificationRequest.Status = new OptionSetValue(((int)LeadStatusCode.Lost));
+
+                    SetStateResponse response = (SetStateResponse)_serviceClient.Execute(disqualificationRequest);
+                    return Ok("Lead is sucessfully disqualified.");
+                }
+                return BadRequest("Lead is not found");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
         }
 
     }
