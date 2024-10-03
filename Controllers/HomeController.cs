@@ -25,7 +25,8 @@ namespace RevisioneNew.Controllers
             _serviceClient = serviceClient;
         }
 
-        [AuthorizeForScopes(ScopeKeySection = "MicrosoftGraph:Scopes")]
+        //[AuthorizeForScopes(ScopeKeySection = "MicrosoftGraph:Scopes")]
+        //[Route("/Home")]
         public IActionResult Index()
         {
             var userClaims = User.Identity;

@@ -17,18 +17,11 @@ namespace RevisioneNew.Controllers
     {
         //private readonly GraphServiceClient _graphServiceClient;
         private readonly ServiceClient _serviceClient;
+        List<Lead> leadList = [];
         public LeadController(ServiceClient serviceClient)
         {
             _serviceClient = serviceClient;
-        }
-        QueryExpression queryExpression = new QueryExpression("lead") { ColumnSet = new ColumnSet("subject", "fullname", "statecode", "createdon") };
-        List<Lead> leadList = [];
-
-
-
-        [HttpPost]
-        public JsonResult LoadLeadList()
-        {
+            QueryExpression queryExpression = new QueryExpression("lead") { ColumnSet = new ColumnSet("subject", "fullname", "statecode", "createdon") };
             EntityCollection leades = _serviceClient.RetrieveMultiple(queryExpression);
             foreach (var item in leades.Entities)
             {
@@ -41,7 +34,14 @@ namespace RevisioneNew.Controllers
                     Id = item.GetAttributeValue<Guid>("leadid")
                 });
             }
-            ViewBag.Employees = "active";
+        }
+
+
+
+        [HttpPost]
+        public JsonResult LoadLeadList()
+        {
+            ViewBag.Lead = "active";
             try
             {
                 var draw = Request.Form["draw"].FirstOrDefault();

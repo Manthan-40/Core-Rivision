@@ -9,19 +9,22 @@ namespace RevisioneNew.Controllers
         public IActionResult Login()
         {
             return View();
-            //return SignIn(new AuthenticationProperties { RedirectUri = Url.Action("Login", "Account") }, OpenIdConnectDefaults.AuthenticationScheme);
         }
 
-        public IActionResult LoginCallBack()
+        public void LoginCallBack()
         {
-            
-            //return Redirect("/MicrosoftIdentity/Account/SignIn");
-            return RedirectToAction("SignIn", "Account", new { area = "MicrosoftIdentity" });
+            HttpContext.ChallengeAsync("OpenIdConnect", new AuthenticationProperties { RedirectUri = Url.Action("Index","Home") }).Wait();
         }
 
         public IActionResult Logout() {
 
-            return SignOut(new AuthenticationProperties{ RedirectUri = Url.Action("Login", "Account")},OpenIdConnectDefaults.AuthenticationScheme);
+
+            //HttpContext.SignOutAsync("OpenIdConnect", new AuthenticationProperties { RedirectUri = Url.Action("Login","Account") }).Wait();
+            foreach (var cookie in Request.Cookies.Keys)
+            {
+                Response.Cookies.Delete(cookie);
+            }
+            return SignOut(new AuthenticationProperties { RedirectUri = Url.Action("Login", "Account") }, OpenIdConnectDefaults.AuthenticationScheme);
         }
 
     }

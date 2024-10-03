@@ -2,10 +2,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,8 +19,29 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddAuthentication()
 //    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"), OpenIdConnectDefaults.AuthenticationScheme, "ADCookies");
 
+
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd")); 
+
+
+//builder.Services.Configure<MicrosoftIdentityOptions>(options =>
+//{
+//    options.SignedOutRedirectUri = "/";
+//});
+
+
+//builder.Services.Configure<CookieAuthenticationOptions>(options =>
+//{
+//    options.LoginPath = "/Account/Login";
+//});
+//builder.Services.Configure<CookiePolicyOptions>(option =>
+//{
+//    option.
+//});
+
+
+//builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
+//.AddOpenIdConnect(builder.Configuration.GetSection("AzureAd"));
 
 //builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
 
@@ -28,9 +52,17 @@ builder.Services.AddScoped<ServiceClient>(option =>
     return new ServiceClient(connectionString);
     //return new ServiceClient(connectionString);
 });
-
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();
+builder.Services.Configure<CookiePolicyOptions>(options =>
+{
+    options.CheckConsentNeeded = context => false; // Disable CSRF check for now
+    options.MinimumSameSitePolicy = SameSiteMode.None;
+});
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.SlidingExpiration = false; // Ensure tokens do not expire unexpectedly
+});
 
 var app = builder.Build();
 
@@ -42,10 +74,12 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
