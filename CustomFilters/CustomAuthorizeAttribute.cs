@@ -11,8 +11,8 @@ namespace RevisioneNew.CustomFilters
             Console.WriteLine("Hiii");
 
             string CookieValue = context.HttpContext.Request.Cookies["LogInUserFromPage"];
-            string usertname = context.HttpContext.User.Identity.Name;
-            if (CookieValue == null) {
+            string username = context.HttpContext.User.Identity.Name;
+            if (CookieValue == null || username == null) {
                 context.Result = new RedirectToActionResult("Login","Account",null);
             }
 

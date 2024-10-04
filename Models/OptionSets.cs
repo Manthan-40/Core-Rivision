@@ -26,6 +26,14 @@
         Lost = 2
     };
 
+    public enum QuoteStateCode
+    {
+        Draft = 0,         // The quote is in draft state.
+        Active = 1,        // The quote is active.
+        Won = 2,           // The quote has been won.
+        Closed = 3,        // The quote has been closed.
+    }
+
     public enum LeadStatusCode {
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Canceled = 7,

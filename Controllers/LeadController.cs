@@ -13,8 +13,8 @@ using RevisioneNew.CustomFilters;
 
 namespace RevisioneNew.Controllers
 {
-    [Authorize]
     [CustomAuthorize]
+    [Authorize]
     public class LeadController : Controller
     {
         //private readonly GraphServiceClient _graphServiceClient;

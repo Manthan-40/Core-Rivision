@@ -108,6 +108,8 @@
             });
         });
         function wonOpportunity(id) {
+            $('#mainscreen').show();
+            $(document.body).addClass('no-scroll');
                 Taskid = id
 
                 $.ajax({
@@ -115,6 +117,8 @@
                     data: { opportunityID: Taskid },
                     type: "Post",
                     success: (r) => {
+                        $('#mainscreen').hide();
+                        $(document.body).removeClass('no-scroll');
                         iziToast.success({
                             title: 'Success :',
                             message: r,
@@ -124,6 +128,8 @@
                     },
                     error: (r) => {
                         debugger
+                        $('#mainscreen').hide();
+                        $(document.body).removeClass('no-scroll');
                         if (r.status == 400) {
                             iziToast.error({
                                 title: 'Error :',
@@ -136,6 +142,8 @@
         }
 
         function lostOpportunity(id) {
+            $('#mainscreen').show();
+            $(document.body).addClass('no-scroll')
             Taskid = id
 
             $.ajax({
@@ -144,6 +152,8 @@
                 type: "Post",
                 success: (r) => {
                     debugger
+                    $('#mainscreen').hide();
+                    $(document.body).removeClass('no-scroll');
                     iziToast.success({
                         title: 'Success :',
                         message: r,
@@ -152,6 +162,8 @@
                     opportunityTable.ajax.reload(null, false);
                 },
                 error: (r) => {
+                    $('#mainscreen').hide();
+                    $(document.body).removeClass('no-scroll');
                     debugger
                     if (r.status == 400) {
                         iziToast.error({

@@ -8,13 +8,13 @@ namespace RevisioneNew.Models
 
         [StringLength(60, MinimumLength = 6)]
         [Required(ErrorMessage = "Please Enter Topic")]
-        public string TopicName { get; set; }
+        public string ? TopicName { get; set; }
 
         [StringLength(60, MinimumLength = 6)]
         [Required(ErrorMessage = "Please Enter FullName")]
-        public string FullName { get; set; }
+        public string ? FullName { get; set; }
         public DateTime CreatedON { get; set; }
 
-        public String Status { get; set; }
+        public String ? Status { get; set; }
     }
 }

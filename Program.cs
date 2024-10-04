@@ -14,9 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
-
-
-
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
     options.Events = new OpenIdConnectEvents
@@ -42,13 +39,20 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             return Task.CompletedTask;
         }
     };
+});
 
+builder.Services.Configure<CookieAuthenticationOptions>(options =>
+{
+    
 });
 
 builder.Services.AddScoped<ServiceClient>(option =>
 {
-    string connectionString = builder.Configuration["ConnectionStrings:default"].ToString();
-    return new ServiceClient(connectionString);
+    //if (builder.Configuration["ConnectionStrings:default"] != null)
+    //{
+        string connectionString = builder.Configuration["ConnectionStrings:default"].ToString();
+        return new ServiceClient(connectionString);
+    //}
 });
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();

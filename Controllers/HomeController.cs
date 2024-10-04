@@ -12,8 +12,8 @@ using RevisioneNew.CustomFilters;
 
 namespace RevisioneNew.Controllers
 {
-    [Authorize]
     [CustomAuthorize]
+    [Authorize]
     public class HomeController : Controller
     {
         //private readonly GraphServiceClient _graphServiceClient;
@@ -32,6 +32,7 @@ namespace RevisioneNew.Controllers
         //[Route("/Home")]
         public IActionResult Index()
         {
+            var user = User.Claims.First(e => e.Type == "name").Value;
             var userClaims = User.Identity;
             ViewBag.Home = "active";
             return View();

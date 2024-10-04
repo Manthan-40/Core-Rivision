@@ -7,10 +7,12 @@ using System.Linq.Dynamic.Core;
 using RevisioneNew.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using RevisioneNew.CustomFilters;
+    using Microsoft.AspNetCore.Authorization;
 
 namespace RevisioneNew.Controllers
 {
     [CustomAuthorize]
+    [Authorize]
     public class OpportunityController : Controller
     {
         //private readonly GraphServiceClient _graphServiceClient;
