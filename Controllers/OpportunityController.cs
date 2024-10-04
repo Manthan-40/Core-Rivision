@@ -6,9 +6,11 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using RevisioneNew.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using RevisioneNew.CustomFilters;
 
 namespace RevisioneNew.Controllers
 {
+    [CustomAuthorize]
     public class OpportunityController : Controller
     {
         //private readonly GraphServiceClient _graphServiceClient;

@@ -1,6 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 @{
     Layout = null;
 }
@@ -16,8 +14,6 @@
     <link rel="stylesheet" href="~/assets/modules/fontawesome/css/all.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/css/components.css" asp-append-version="true" />
-
-    @*@Styles.Render("~/Content/bootstrap.css");*@
 
 </head>
 
@@ -47,9 +43,6 @@
                                     }
 
                             <div class="form-group">
-                                @*<button type="submit" class="btn btn-primary btn-lg btn-block" id="LoginBtn" tabindex="4">
-                                    Login
-                                </button>*@ 
                                 <div class="w-100 text-center">
                                     <a class="text-white bg-primary text-center px-5 py-2 w-100" style="text-decoration:none" asp-area="" asp-controller="Account" asp-action="LoginCallBack">LogIn</a>
                                 </div>
@@ -57,9 +50,6 @@
                                 }
                             </div>
                         </div>
-                        @*<div class="mt-5 text-muted text-center">
-                            Don't have an account? <a href="/LoginOrSignup/Register">Create One</a>
-                        </div>*@
                         <div class="simple-footer">
                             Copyright &copy; Stisla 2018
                         </div>
@@ -80,18 +70,5 @@
 
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
-
-    <script>
-        //document.getElementById('LoginBtn').addEventListener('click', (e) => {
-        //    e.preventDefault();
-        //    //$.ajax({
-        //    //    url: '/Account/LoginCallBack',
-        //    //    type: "Post",
-        //    //    success: function (r) {
-        //    //        console.log(r);
-        //    //    }
-        //    //})
-        //})
-    </script>
 </body>
 </html>

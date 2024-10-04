@@ -8,10 +8,12 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System.Security.Claims;
+using RevisioneNew.CustomFilters;
 
 namespace RevisioneNew.Controllers
 {
     [Authorize]
+    [CustomAuthorize]
     public class HomeController : Controller
     {
         //private readonly GraphServiceClient _graphServiceClient;
@@ -20,6 +22,7 @@ namespace RevisioneNew.Controllers
 
         public HomeController(ILogger<HomeController> logger, ServiceClient serviceClient)
         {
+
             _logger = logger;
             //_graphServiceClient = graphServiceClient;
             _serviceClient = serviceClient;

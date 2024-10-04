@@ -12,57 +12,60 @@ using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//var initialScopes = builder.Configuration["DownstreamApi:Scopes"]?.Split(' ') ?? builder.Configuration["MicrosoftGraph:Scopes"]?.Split(' ');
-
-//builder.Services.AddAuthentication(option => { option.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme; option.DefaultScheme = OpenIdConnectDefaults.AuthenticationScheme; }).AddCookie(x => { x.LoginPath = "/Account/Login"; });
-
-//builder.Services.AddAuthentication()
-//    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"), OpenIdConnectDefaults.AuthenticationScheme, "ADCookies");
-
-
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd")); 
+    .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
 
-//builder.Services.Configure<MicrosoftIdentityOptions>(options =>
-//{
-//    options.SignedOutRedirectUri = "/";
-//});
 
+builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
+{
+    options.Events = new OpenIdConnectEvents
+    {
+        OnRemoteFailure = context =>
+        {
+            // Clear the default authentication cookie set by ASP.NET Core's cookie middleware
+            context.Response.Cookies.Delete(CookieAuthenticationDefaults.CookiePrefix + CookieAuthenticationDefaults.AuthenticationScheme);
 
-//builder.Services.Configure<CookieAuthenticationOptions>(options =>
-//{
-//    options.LoginPath = "/Account/Login";
-//});
-//builder.Services.Configure<CookiePolicyOptions>(option =>
-//{
-//    option.
-//});
+            // Optionally, clear other related cookies (if any), or loop through all cookies to delete them
+            foreach (var cookie in context.Request.Cookies.Keys)
+            {
+                context.Response.Cookies.Delete(cookie);
+            }
+            context.Response.Redirect("/login");
+            context.HandleResponse(); // Prevents further processing
+            return Task.CompletedTask;
+        },
+        OnSignedOutCallbackRedirect = context =>
+        {
+            context.Response.Redirect("/login");
+            context.HandleResponse(); // Prevents further processing
+            return Task.CompletedTask;
+        }
+    };
 
-
-//builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
-//.AddOpenIdConnect(builder.Configuration.GetSection("AzureAd"));
-
-//builder.Services.AddControllersWithViews().AddMicrosoftIdentityUI();
-
+});
 
 builder.Services.AddScoped<ServiceClient>(option =>
 {
     string connectionString = builder.Configuration["ConnectionStrings:default"].ToString();
     return new ServiceClient(connectionString);
-    //return new ServiceClient(connectionString);
 });
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();
-builder.Services.Configure<CookiePolicyOptions>(options =>
-{
-    options.CheckConsentNeeded = context => false; // Disable CSRF check for now
-    options.MinimumSameSitePolicy = SameSiteMode.None;
-});
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.SlidingExpiration = false; // Ensure tokens do not expire unexpectedly
-});
+//builder.Services.Configure<CookiePolicyOptions>(options =>
+//{
+//    options.CheckConsentNeeded = context => false; // Disable CSRF check for now
+//    options.MinimumSameSitePolicy = SameSiteMode.None;
+//});
+
+//builder.Services.Configure<CookieAuthenticationOptions>(options =>
+//{
+//    options.
+//});
+//builder.Services.ConfigureApplicationCookie(options =>
+//{
+//    options.SlidingExpiration = false; // Ensure tokens do not expire unexpectedly
+//});
 
 var app = builder.Build();
 
@@ -85,7 +88,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}");
+    pattern: "{controller=Home}/{action=Index}");
 app.MapRazorPages();
 
 app.Run();
