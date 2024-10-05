@@ -8,7 +8,7 @@
         public string Email { get; set; }
         public string Phone { get; set; }
         public string WebsiteUrl { get; set; }
-        public string Fax { get; set; }
+        //public string Fax { get; set; }
 
         // Primary Address (Main Business Address)
         public string Address1_Line1 { get; set; }
