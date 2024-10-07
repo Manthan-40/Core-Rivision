@@ -51,9 +51,9 @@
                     orderable: false
                     }],
                 "columns": [
-                    { "data": "topic", "name": "Topic", "autoWidth": true },
+                    { "data": "topic", "name": "name", "autoWidth": true },
                     {
-                        "data": "description", "name": "Description", "autoWidth": true,
+                        "data": "description", "name": "description", "autoWidth": true,
                         render: function (data) {
                             if (data == null) {
                                 return `<b>No Description Available</b>`
@@ -64,7 +64,7 @@
                         }
                     },
                     {
-                        "data": "status", "name": "Status", "autoWidth": true,
+                        "data": "status", "name": "statecode", "autoWidth": true,
                         render: function (data) {
                             if (data == '@OpportunityStateCode.Open.ToString()')
                             {
@@ -81,10 +81,10 @@
                         }
                     },
                     {
-                        "data": "createdON", "name": "CreatedON", "autoWidth": true,
+                        "data": "createdON", "name": "createdon", "autoWidth": true,
                         render: function (data) {
                             let date = new Date(data.split('T')[0]);
-                            return date.toLocaleDateString()
+                            return date.toLocaleDateString('en-GB')
                         }
                     },
                     {

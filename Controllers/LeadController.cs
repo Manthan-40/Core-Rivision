@@ -10,6 +10,8 @@ using Microsoft.Crm.Sdk.Messages;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Authorization;
 using RevisioneNew.CustomFilters;
+using System.Reflection;
+using System.ComponentModel;
 
 namespace RevisioneNew.Controllers
 {
@@ -19,7 +21,7 @@ namespace RevisioneNew.Controllers
     {
         //private readonly GraphServiceClient _graphServiceClient;
         private readonly ServiceClient _serviceClient;
-        List<Lead> leadList = [];
+        List<LeadModel> leadList = [];
         public LeadController(ServiceClient serviceClient)
         {
             _serviceClient = serviceClient;
@@ -27,7 +29,7 @@ namespace RevisioneNew.Controllers
             EntityCollection leades = _serviceClient.RetrieveMultiple(queryExpression);
             foreach (var item in leades.Entities)
             {
-                leadList.Add(new Lead
+                leadList.Add(new LeadModel
                 {
                     TopicName = item.GetAttributeValue<string>("subject"),
                     FullName = item.GetAttributeValue<string>("fullname"),
@@ -43,6 +45,15 @@ namespace RevisioneNew.Controllers
         [HttpPost]
         public JsonResult LoadLeadList()
         {
+            LeadStatusCode LeadStatusCod = LeadStatusCode.Canceled;
+            FieldInfo fi = LeadStatusCod.GetType().GetField(LeadStatusCod.ToString());
+            DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
+
+            if (attributes != null && attributes.Any())
+            {
+               string desiption = attributes.First().Description;
+            }
+
             ViewBag.Lead = "active";
             try
             {
@@ -52,6 +63,7 @@ namespace RevisioneNew.Controllers
                 var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
                 var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
                 var searchValue = Request.Form["search[value]"].FirstOrDefault();
+
                 int pageSize = length != null ? Convert.ToInt32(length) : 0;
                 int skip = start != null ? Convert.ToInt32(start) : 0;
                 int recordsTotal = 0;

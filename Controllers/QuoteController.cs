@@ -6,6 +6,7 @@ using System.Linq.Dynamic.Core;
 using RevisioneNew.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using RevisioneNew.Interfaces;
+using RevisioneNew.Services;
 
 namespace RevisioneNew.Controllers
 {
@@ -13,12 +14,14 @@ namespace RevisioneNew.Controllers
     {
         private readonly ServiceClient _serviceClient;
         private readonly IServiceInterface _service;
-        List<Quote> quoteList = new List<Quote>();
+        private readonly IQuoteInterface _quoteService;
+            List<Quote> quoteList = new List<Quote>();
 
-        public QuoteController(ServiceClient serviceClient, IServiceInterface service)
+        public QuoteController(ServiceClient serviceClient, IServiceInterface service,IQuoteInterface quoteService)
         {
             _service = service;
             _serviceClient = serviceClient;
+            _quoteService = quoteService;
             QueryExpression queryExpression = new QueryExpression("quote")
             {
                 ColumnSet = new ColumnSet("name", "totalamount", "statecode", "createdon","quotenumber", "statuscode")
@@ -51,24 +54,33 @@ namespace RevisioneNew.Controllers
                 var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
                 var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
                 var searchValue = Request.Form["search[value]"].FirstOrDefault();
+
                 int pageSize = length != null ? Convert.ToInt32(length) : 0;
                 int skip = start != null ? Convert.ToInt32(start) : 0;
                 int recordsTotal = 0;
 
-                var quoteData = quoteList.AsQueryable();
-                if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
+                PagingInfo pagingInfo = new PagingInfo()
                 {
-                    quoteData = quoteData.OrderBy(sortColumn + " " + sortColumnDirection);
+                    Count = pageSize,
+                    PageNumber = (skip/pageSize)+1,
+                    ReturnTotalRecordCount =true
+                };
+                var QuoteData = _quoteService.getQuoteData(draw, "name", pagingInfo, searchValue); 
+                //var quoteData = quoteList.AsQueryable();
+                //if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
+                //{
+                //    quoteData = quoteData.OrderBy(sortColumn + " " + sortColumnDirection);
 
-                }
-                if (!string.IsNullOrEmpty(searchValue))
-                {
-                    quoteData = quoteData.Where(m => m.QuoteName.Contains(searchValue));
-                }
-                recordsTotal = quoteData.Count();
-                var data = quoteData.Skip(skip).Take(pageSize).ToList();
-                var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data };
-                return Json(jsonData);
+                //}
+                //if (!string.IsNullOrEmpty(searchValue))
+                //{
+                //    quoteData = quoteData.Where(m => m.QuoteName.Contains(searchValue));
+                //}
+                //recordsTotal = quoteData.Count();
+                //var data = quoteData.Skip(skip).Take(pageSize).ToList();
+                //var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data };
+
+                return Json(QuoteData);
             }
             catch (Exception ex)
             {
@@ -173,7 +185,7 @@ namespace RevisioneNew.Controllers
         {
             try
             {
-                string reviseQuoteNumber = _service.RevisedQuoteService(quoteID);
+                string reviseQuoteNumber = _quoteService.RevisedQuoteService(quoteID);
                 if(reviseQuoteNumber != null)
                 {
                     return Ok($"Revised Quote created with Quote number: {reviseQuoteNumber}");
@@ -184,6 +196,26 @@ namespace RevisioneNew.Controllers
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        public IActionResult DeleteQuote(string quoteID)
+        {
+            try
+            {
+                if(quoteID != null)
+                {
+                    Guid quoteGuid = new Guid(quoteID);
+                    _service.Delete("quote", quoteGuid);
+                    return Ok("Data deleted successfully.");
+                }
+                return BadRequest("Quote is not found.");
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+
         }
 
         [Route("/Quotes")]

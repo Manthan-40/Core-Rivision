@@ -1,7 +1,9 @@
-﻿namespace RevisioneNew.Interfaces
+﻿using Microsoft.Graph;
+
+namespace RevisioneNew.Interfaces
 {
     public interface IServiceInterface
     {
-        public string RevisedQuoteService(string quote); 
+        public void Delete(string entityName, Guid entityID); 
     }
 }

@@ -8,6 +8,7 @@ using RevisioneNew.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using RevisioneNew.CustomFilters;
     using Microsoft.AspNetCore.Authorization;
+using RevisioneNew.Interfaces;
 
 namespace RevisioneNew.Controllers
 {
@@ -17,23 +18,11 @@ namespace RevisioneNew.Controllers
     {
         //private readonly GraphServiceClient _graphServiceClient;
         private readonly ServiceClient _serviceClient;
-        List<Opportunity> opportunityList = [];
-        public OpportunityController(ServiceClient serviceClient)
+        private readonly IOpportunityInterface _opportunityService;
+        public OpportunityController(ServiceClient serviceClient, IOpportunityInterface opportunityService)
         {
             _serviceClient = serviceClient;
-            QueryExpression queryExpression = new QueryExpression("opportunity") { ColumnSet = new ColumnSet("name", "description", "statecode", "createdon") };
-            EntityCollection leades = _serviceClient.RetrieveMultiple(queryExpression);
-            foreach (var item in leades.Entities)
-            {
-                opportunityList.Add(new Opportunity
-                {
-                    Topic = item.GetAttributeValue<string>("name"),
-                    Description = item.GetAttributeValue<string>("description"),
-                    Status = ((OpportunityStateCode)item.GetAttributeValue<OptionSetValue>("statecode").Value).ToString(),
-                    CreatedON = item.GetAttributeValue<DateTime>("createdon"),
-                    Id = item.GetAttributeValue<Guid>("opportunityid")
-                });
-            }
+            _opportunityService = opportunityService;
         }
 
 
@@ -50,24 +39,34 @@ namespace RevisioneNew.Controllers
                 var sortColumn = Request.Form["columns[" + Request.Form["order[0][column]"].FirstOrDefault() + "][name]"].FirstOrDefault();
                 var sortColumnDirection = Request.Form["order[0][dir]"].FirstOrDefault();
                 var searchValue = Request.Form["search[value]"].FirstOrDefault();
+
                 int pageSize = length != null ? Convert.ToInt32(length) : 0;
                 int skip = start != null ? Convert.ToInt32(start) : 0;
                 int recordsTotal = 0;
+                PagingInfo pagingInfo = new PagingInfo()
+                {
+                    Count = pageSize,
+                    PageNumber = (skip/pageSize)+1,
+                    ReturnTotalRecordCount =true
+                };
+                EntityCollection opportunities = _opportunityService.GetaAllOpportunities(sortColumn, pagingInfo,searchValue, sortColumnDirection);
 
-                var OpportunityData = opportunityList.AsQueryable();
-                if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
+                List<OpportunityModel> opportunityList = new List<OpportunityModel>();
+                foreach (var item in opportunities.Entities)
                 {
-                    OpportunityData = OpportunityData.OrderBy(sortColumn + " " + sortColumnDirection);
+                    opportunityList.Add(new OpportunityModel
+                    {
+                        Topic = item.GetAttributeValue<string>("name"),
+                        Description = item.GetAttributeValue<string>("description"),
+                        Status = ((OpportunityStateCode)item.GetAttributeValue<OptionSetValue>("statecode").Value).ToString(),
+                        CreatedON = item.GetAttributeValue<DateTime>("createdon"),
+                        Id = item.GetAttributeValue<Guid>("opportunityid")
+                    });
                 }
-                if (!string.IsNullOrEmpty(searchValue))
-                {
-                    OpportunityData = OpportunityData.Where(m => m.Topic.Contains(searchValue)
-                                                || m.Description.Contains(searchValue));
-                }
-                recordsTotal = OpportunityData.Count();
-                var data = OpportunityData.Skip(skip).Take(pageSize).ToList();
-                var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data };
-                var data2 = Json(jsonData);
+
+                recordsTotal = opportunities.TotalRecordCount;
+                var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = opportunityList };
+                
                 return Json(jsonData);
 
             }

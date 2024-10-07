@@ -1,4 +1,6 @@
-﻿namespace RevisioneNew.Models
+﻿using System.ComponentModel;
+
+namespace RevisioneNew.Models
 {
     public enum LeadStateCode
     {
@@ -47,6 +49,7 @@
 
     public enum LeadStatusCode {
         [System.Runtime.Serialization.EnumMemberAttribute()]
+        [Description("Canceled status")]
         Canceled = 7,
 
         [System.Runtime.Serialization.EnumMemberAttribute()]

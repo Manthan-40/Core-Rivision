@@ -57,6 +57,8 @@ builder.Services.AddScoped<ServiceClient>(option =>
 
 
 builder.Services.AddScoped<IServiceInterface, ServiceHelper>();
+builder.Services.AddScoped<IQuoteInterface, QuoteService>();
+builder.Services.AddScoped<IOpportunityInterface, OpportuntiyService>();
 
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();

@@ -28,6 +28,7 @@
     <script src="~/assets/modules/datatables/DataTables-1.10.16/js/dataTables.bootstrap4.min.js"></script>
     <script src="~/assets/modules/datatables/Select-1.2.4/js/dataTables.select.min.js"></script>
     <script src="~/assets/modules/jquery-ui/jquery-ui.min.js"></script>
+    <script src="~/assets/modules/sweetalert/sweetalert.min.js"></script>
     <script src="~/assets/modules/izitoast/js/iziToast.min.js"></script>
 
     <script>
@@ -47,7 +48,7 @@
                     "targets": [2,3],
                     searchable: false
                 }, {
-                        "targets": [4],
+                        "targets": [5],
                     searchable: false,
                     orderable: false
                     }],
@@ -100,12 +101,14 @@
                             if (full.status == '@QuoteStateCode.Draft.ToString()') {
                                 ReturnHtml += `<button class="btn btn-info mx-2" onclick="activateQuote('${full.quoteId}')" data-toggle="tooltip" data-original-title="ActivateQuote"><i class="fas fa-file-alt"></i></button>`
                             }
-                            if (full.status == '@QuoteStateCode.Closed.ToString()' && full.statuscode != '@QuoteStatusCode.Revised.ToString()') {
+                            if (full.status == '@QuoteStateCode.Closed.ToString()') {
                                 ReturnHtml += `<button class="btn btn-info mx-2" onclick="reviseQuote('${full.quoteId}')" data-toggle="tooltip" data-original-title="Revise Quote"><i class="fas fa-file-signature"></i></button>`
                             }
                             if (full.status == '@QuoteStateCode.Active.ToString()') {
                                 ReturnHtml += `<button class="btn btn-warning mx-2" onclick="winQuote('${full.quoteId}','${full.quoteNumber}')" data-toggle="tooltip" data-original-title="Won Quote Create Order"><i class="fas fa-check"></i></button><button class="btn btn-danger mx-2" onclick="quoteCloseasLost('${full.quoteId}','${full.quoteNumber}')" data-toggle="tooltip" data-original-title="Close Quote as Lost"><i class="fas fa-times"></i></button>`
                             }
+                            ReturnHtml += `
+                                <button class="btn btn-dark mx-2" onclick="deleteQuote('${full.quoteId}','${full.quoteNumber}')" data-toggle="tooltip" data-original-title="Quote information"><i class="fas fa-trash"></i></button>`
                             return ReturnHtml
                         }
                     }
@@ -254,6 +257,57 @@
             })
         }
 
+        function deleteQuote(id,quotenumber) {
+            swal({
+                title: 'Are you sure?',
+                text: 'Are you sure you want to delete this quote?',
+                icon: 'warning',
+                buttons: true,
+                dangerMode: true,
+            })
+                .then((willDelete) => {
+                    if (willDelete) {
+                        $('#mainscreen').show();
+                        $(document.body).addClass('no-scroll')
+                        $.ajax({
+                            url: '@Url.Action("DeleteQuote", "Quote")',
+                            data: { quoteID: id},
+                            type: "Post",
+                            success: (r) => {
+                                //debugger
+                                $('#mainscreen').hide();
+                                $(document.body).removeClass('no-scroll');
+                                iziToast.success({
+                                    title: 'Success :',
+                                    message: r,
+                                    position: 'topRight'
+                                });
+                                opportunityTable.ajax.reload(null, false);
+                            },
+                            error: (r) => {
+                                $('#mainscreen').hide();
+                                $(document.body).removeClass('no-scroll');
+                                //debugger
+                                if (r.status == 400) {
+                                    iziToast.error({
+                                        title: 'Error :',
+                                        message: r.responseText,
+                                        position: 'topRight'
+                                    });
+                                }
+                            }
+                        })
+                    }
+                });
+
+
+
+
+
+
+
+        }
+
         function TostExample(id) {
             iziToast.success({
                 theme: 'dark',
@@ -267,4 +321,4 @@
 
         }
     </script>
-}
+}   

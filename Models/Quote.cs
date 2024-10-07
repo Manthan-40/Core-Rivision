@@ -13,6 +13,6 @@
 
         // Foreign Keys
         public Guid OpportunityId { get; set; }
-        public Opportunity Opportunity { get; set; }
+        public OpportunityModel Opportunity { get; set; }
     }
 }

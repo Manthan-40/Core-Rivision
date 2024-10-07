@@ -9,22 +9,19 @@ namespace RevisioneNew.Services
 {
     public class ServiceHelper : IServiceInterface
     {
-        private readonly ServiceClient _serviceClient;
+        protected readonly ServiceClient _serviceClient;
         public ServiceHelper(ServiceClient serviceClient) {
             _serviceClient = serviceClient;
         }
-        public string RevisedQuoteService(string quote)
+
+        public void Delete(string entityName, Guid entityID)
         {
-            if (quote != null)
-            {
-                Guid quoteGuid = new Guid(quote);
-                ReviseQuoteRequest reviseQuoteRequest = new ReviseQuoteRequest();
-                reviseQuoteRequest.QuoteId = quoteGuid;
-                reviseQuoteRequest.ColumnSet = new ColumnSet("quotenumber");
-                ReviseQuoteResponse resp = (ReviseQuoteResponse)_serviceClient.Execute(reviseQuoteRequest);
-                return resp.Entity.GetAttributeValue<string>("quotenumber");
-            }
-            return null;
+            _serviceClient.Delete(entityName, entityID);
+        }
+
+        public ServiceClient Service()
+        {
+            return _serviceClient;
         }
     }
 }

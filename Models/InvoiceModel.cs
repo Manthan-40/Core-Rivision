@@ -1,6 +1,6 @@
 ﻿namespace RevisioneNew.Models
 {
-    public class Invoice
+    public class InvoiceModel
     {
         public Guid InvoiceId { get; set; }
         public string ? InvoiceNumber { get; set; }
