@@ -5,21 +5,23 @@ using Microsoft.Xrm.Sdk;
 using System.Linq.Dynamic.Core;
 using RevisioneNew.Models;
 using Microsoft.PowerPlatform.Dataverse.Client;
-//using Microsoft.Graph;
+using RevisioneNew.Interfaces;
 
 namespace RevisioneNew.Controllers
 {
     public class QuoteController : Controller
     {
         private readonly ServiceClient _serviceClient;
+        private readonly IServiceInterface _service;
         List<Quote> quoteList = new List<Quote>();
 
-        public QuoteController(ServiceClient serviceClient)
+        public QuoteController(ServiceClient serviceClient, IServiceInterface service)
         {
+            _service = service;
             _serviceClient = serviceClient;
             QueryExpression queryExpression = new QueryExpression("quote")
             {
-                ColumnSet = new ColumnSet("name", "totalamount", "statecode", "createdon")
+                ColumnSet = new ColumnSet("name", "totalamount", "statecode", "createdon","quotenumber", "statuscode")
             };
             EntityCollection quotes = _serviceClient.RetrieveMultiple(queryExpression);
 
@@ -27,11 +29,13 @@ namespace RevisioneNew.Controllers
             {
                 quoteList.Add(new Quote
                 {
+                    QuoteNumber = item.GetAttributeValue<string>("quotenumber"),
                     QuoteName = item.GetAttributeValue<string>("name"),
                     TotalAmount = item.GetAttributeValue<Money>("totalamount").Value,
                     Status = ((QuoteStateCode)item.GetAttributeValue<OptionSetValue>("statecode").Value).ToString(),
                     CreatedOn = item.GetAttributeValue<DateTime>("createdon"),
-                    QuoteId = item.GetAttributeValue<Guid>("quoteid")
+                    QuoteId = item.GetAttributeValue<Guid>("quoteid"),
+                    Statuscode = ((QuoteStatusCode)item.GetAttributeValue<OptionSetValue>("statuscode").Value).ToString()
                 });
             }
         }
@@ -73,28 +77,60 @@ namespace RevisioneNew.Controllers
         }
 
         [HttpPost]
-        public IActionResult CloseQuote(string quoteID, bool isWon)
+        public IActionResult CloseQuote(string quoteID, string quoteNumber)
         {
             try
-            {
+            {  
                 if (quoteID != null)
                 {
-                    Guid quoteGuid = new Guid(quoteID);
+                    Guid quoteGuid = new(quoteID);
 
                     CloseQuoteRequest closeQuoteRequest = new CloseQuoteRequest();
                     closeQuoteRequest.QuoteClose = new Entity("quoteclose")
                     {
                         Attributes =
-                    {
-                        { "quoteid", new EntityReference("quote", quoteGuid) }
-                    }
+                        {
+                            {"subject",$"Quote Closed (Lost) - {quoteNumber}" },
+                            { "quoteid", new EntityReference("quote", quoteGuid) }
+                        }
                     };
-
-                    // Use -1 for default status or specific values for Won/Lost statuses
-                    closeQuoteRequest.Status = isWon ? new OptionSetValue(4) : new OptionSetValue(5); // 4: Won, 5: Lost
+                    closeQuoteRequest.Status = new OptionSetValue((int)QuoteStatusCode.Lost);
                     _serviceClient.Execute(closeQuoteRequest);
 
-                    return Ok($"Quote is successfully {(isWon ? "Won" : "Lost")}.");
+                    return Ok($"Quote is successfully Lost.");
+                }
+                return BadRequest("Quote not found");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult WinQuote (string quoteID, string quoteNumber)
+        {
+            try
+            {
+                if (quoteID != null)
+                {
+                    Guid quoteGuid = new(quoteID);
+
+                    WinQuoteRequest winQuoteRequest = new()
+                    {
+                        QuoteClose = new Entity("quoteclose")
+                        {
+                            Attributes =
+                            {
+                                {"subject", $"Quote Won (Won) - {quoteNumber}" },
+                                { "quoteid", new EntityReference("quote", quoteGuid) }
+                            }
+                        },
+                        Status = new OptionSetValue(-1)
+                    };
+                    _serviceClient.Execute(winQuoteRequest);
+
+                    return Ok($"Quote is successfully Won.");
                 }
                 return BadRequest("Quote not found");
             }
@@ -113,23 +149,36 @@ namespace RevisioneNew.Controllers
                 {
                     Guid quoteGuid = new Guid(quoteID);
 
-                    Entity closeQuoteUpdate = new("quote")
+                    SetStateRequest activateQuote = new SetStateRequest()
                     {
-                        Id = quoteGuid,
-                        Attributes = {
-                            // Active
-                            { "statecode", new OptionSetValue(1) },
-                            // In Progress
-                            { "statuscode", new OptionSetValue(2) }
-                        }
+                        EntityMoniker = new EntityReference("quote",quoteGuid),
+                        State = new OptionSetValue((int)QuoteStateCode.Active),
+                        Status = new OptionSetValue((int)QuoteStatusCode.InProgress_Active) //in progress
                     };
-
-                    _serviceClient.Update(closeQuoteUpdate);
-                    return Ok("Order successfully created from Quote.");
+                    _serviceClient.Execute(activateQuote);
+                    return Ok("Quote is successfully Activated.");
 
                     //return BadRequest("Order creation failed.");
                 }
                 return BadRequest("Quote not found");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        public IActionResult ReviseQuote(string quoteID)
+        {
+            try
+            {
+                string reviseQuoteNumber = _service.RevisedQuoteService(quoteID);
+                if(reviseQuoteNumber != null)
+                {
+                    return Ok($"Revised Quote created with Quote number: {reviseQuoteNumber}");
+                }
+                return BadRequest("There is some error occured");
             }
             catch (Exception ex)
             {

@@ -8,12 +8,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using RevisioneNew.Interfaces;
+using RevisioneNew.Services;
 using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
+
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options =>
 {
     options.Events = new OpenIdConnectEvents
@@ -48,28 +51,15 @@ builder.Services.Configure<CookieAuthenticationOptions>(options =>
 
 builder.Services.AddScoped<ServiceClient>(option =>
 {
-    //if (builder.Configuration["ConnectionStrings:default"] != null)
-    //{
         string connectionString = builder.Configuration["ConnectionStrings:default"].ToString();
         return new ServiceClient(connectionString);
-    //}
 });
+
+
+builder.Services.AddScoped<IServiceInterface, ServiceHelper>();
+
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();
-//builder.Services.Configure<CookiePolicyOptions>(options =>
-//{
-//    options.CheckConsentNeeded = context => false; // Disable CSRF check for now
-//    options.MinimumSameSitePolicy = SameSiteMode.None;
-//});
-
-//builder.Services.Configure<CookieAuthenticationOptions>(options =>
-//{
-//    options.
-//});
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//    options.SlidingExpiration = false; // Ensure tokens do not expire unexpectedly
-//});
 
 var app = builder.Build();
 

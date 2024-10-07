@@ -34,6 +34,17 @@
         Closed = 3,        // The quote has been closed.
     }
 
+    public enum QuoteStatusCode
+    {
+        InProgress_Draft = 1,         
+        InProgress_Active = 2,         
+        Open = 3,               
+        Won = 4,
+        Lost = 5,
+        Canceled = 6,
+        Revised = 7
+    }
+
     public enum LeadStatusCode {
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Canceled = 7,
