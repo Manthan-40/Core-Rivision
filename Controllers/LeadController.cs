@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using RevisioneNew.CustomFilters;
 using System.Reflection;
 using System.ComponentModel;
+using RevisioneNew.Interfaces;
 
 namespace RevisioneNew.Controllers
 {
@@ -21,23 +22,12 @@ namespace RevisioneNew.Controllers
     {
         //private readonly GraphServiceClient _graphServiceClient;
         private readonly ServiceClient _serviceClient;
-        List<LeadModel> leadList = [];
-        public LeadController(ServiceClient serviceClient)
+        private readonly ILeadInterface _leadService;
+        public LeadController(ServiceClient serviceClient, ILeadInterface leadInterface)
         {
             _serviceClient = serviceClient;
-            QueryExpression queryExpression = new QueryExpression("lead") { ColumnSet = new ColumnSet("subject", "fullname", "statecode", "createdon") };
-            EntityCollection leades = _serviceClient.RetrieveMultiple(queryExpression);
-            foreach (var item in leades.Entities)
-            {
-                leadList.Add(new LeadModel
-                {
-                    TopicName = item.GetAttributeValue<string>("subject"),
-                    FullName = item.GetAttributeValue<string>("fullname"),
-                    Status = ((LeadStateCode)item.GetAttributeValue<OptionSetValue>("statecode").Value).ToString(),
-                    CreatedON = item.GetAttributeValue<DateTime>("createdon"),
-                    Id = item.GetAttributeValue<Guid>("leadid")
-                });
-            }
+            _leadService = leadInterface;
+           
         }
 
 
@@ -66,23 +56,17 @@ namespace RevisioneNew.Controllers
 
                 int pageSize = length != null ? Convert.ToInt32(length) : 0;
                 int skip = start != null ? Convert.ToInt32(start) : 0;
-                int recordsTotal = 0;
 
-                var LeadlistData = leadList.AsQueryable();
-                if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
+                PagingInfo pagingInfo = new PagingInfo()
                 {
-                    LeadlistData = LeadlistData.OrderBy(sortColumn + " " + sortColumnDirection);
-                }
-                if (!string.IsNullOrEmpty(searchValue))
-                {
-                    LeadlistData = LeadlistData.Where(m => m.FullName.Contains(searchValue)
-                                                || m.TopicName.Contains(searchValue));
-                }
-                recordsTotal = LeadlistData.Count();
-                var data = LeadlistData.Skip(skip).Take(pageSize).ToList();
-                var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data };
-                var data2 = Json(jsonData);
-                return Json(jsonData);
+                    Count = pageSize,
+                    PageNumber = (skip / pageSize) + 1,
+                    ReturnTotalRecordCount = true
+                };
+
+                Datatable<LeadModel> leads = _leadService.GetaAllLeades(draw, "subject", pagingInfo, searchValue, sortColumnDirection);
+
+                return Json(leads);
 
             }
             catch (Exception ex)
@@ -150,6 +134,29 @@ namespace RevisioneNew.Controllers
                 return BadRequest(ex.Message);
             }
 
+        }
+
+
+        public IActionResult Details(string leadId =null)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(leadId))
+                {
+                    Guid LeadGUID = new Guid(leadId);
+                    LeadModel lead = _leadService.GetLeadById(LeadGUID);                    
+
+                    ViewBag.Lead = "active";        
+                    return View(lead);
+                }
+                return BadRequest("Can't find LeadID '" + leadId +"'");
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
 
     }

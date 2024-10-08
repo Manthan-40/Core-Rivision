@@ -3,7 +3,7 @@
     <div class="section-header">
         <div class="d-flex justify-content-between w-100">
             <h1>Leades</h1>
-            <div class="mb-3 text-center"><button class="btn btn-primary" onclick="AddorEditEmployee(0)"><i class="fas fa-plus"></i> Add Lead</button></div>
+            <div class="mb-3 text-center"><a class="btn btn-primary text-light" asp-action="Details" asp-controller="Lead"><i class="fas fa-plus"></i> Add Lead</a></div>
 
         </div>
         @*<div>
@@ -45,7 +45,7 @@
                 "serverSide": true,
                 "filter": true,
                 "ajax": {
-                    "url": "/Lead/LoadLeadList",
+                    "url": '@Url.Action("LoadLeadList","Lead")',
                     "type": "POST",
                     "datatype": "json",
                 },
@@ -87,7 +87,7 @@
                     {
                         render: function (data, type, full, meta) {
                             let ReturnHtml = `<div class="w-100 d-flex justify-content-center">
-                                <button class="btn btn-primary mx-2" onclick="alert('${full.id}')" data-toggle="tooltip" data-original-title="Lead information"><i class="fas fa-eye"></i></button>`
+                                <button class="btn btn-primary mx-2" onclick="Details('${full.id}')" data-toggle="tooltip" data-original-title="Lead information"><i class="fas fa-eye"></i></button>`
                             if (full.status == '@LeadStateCode.Open.ToString()') {
                                 ReturnHtml += `<button class="btn btn-warning mx-2" onclick="QualifyLead('${full.id}')" data-toggle="tooltip" data-original-title="Qualify Lead"><i class="fas fa-check"></i></button><button class="btn btn-danger mx-2" onclick="disqualifyLead('${full.id}')" data-toggle="tooltip" data-original-title="Disquality Lead"><i class="fas fa-times"></i></button></div>`
                                 }
@@ -176,5 +176,42 @@
                 }
             })
         }
+
+        function Details(id) {
+            window.location.href = '/Lead/Details?leadId=' + id;
+        }
+
+        @*function Display(id) {
+            Taskid = id
+
+            $.ajax({
+                url: '@Url.Action("Details","Lead")',
+                data: { leadId: Taskid },
+                type: "Post",
+                success: (r) => {
+                    $('#mainscreen').hide();
+                    $(document.body).removeClass('no-scroll');
+                    debugger
+                    iziToast.success({
+                        title: 'Success :',
+                        message: r,
+                        position: 'topRight'
+                    });
+                    leadTable.ajax.reload(null, false);
+                },
+                error: (r) => {
+                    $('#mainscreen').hide();
+                    $(document.body).removeClass('no-scroll');
+                    debugger
+                    if (r.status == 400) {
+                        iziToast.error({
+                            title: 'Error :',
+                            message: r.responseText,
+                            position: 'topRight'
+                        });
+                    }
+                }
+            })
+        }*@
     </script>
 }

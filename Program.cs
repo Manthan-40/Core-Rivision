@@ -9,11 +9,12 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.UI;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using RevisioneNew.Interfaces;
+using RevisioneNew.Models;
 using RevisioneNew.Services;
 using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
-
+//bool _clearCookies = false;
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
     .AddMicrosoftIdentityWebApp(builder.Configuration.GetSection("AzureAd"));
 
@@ -58,7 +59,9 @@ builder.Services.AddScoped<ServiceClient>(option =>
 
 builder.Services.AddScoped<IServiceInterface, ServiceHelper>();
 builder.Services.AddScoped<IQuoteInterface, QuoteService>();
+builder.Services.AddScoped<ILeadInterface, LeadService>();
 builder.Services.AddScoped<IOpportunityInterface, OpportuntiyService>();
+//builder.Services.AddSingleton<SingleSignInModel>();
 
 builder.Services.AddRazorPages()
     .AddMicrosoftIdentityUI();
@@ -81,6 +84,20 @@ app.UseRouting();
 app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
+
+//app.Use((context, next) =>
+//{
+//    if (context.Request.Cookies.Count > 0 && !_clearCookies)
+//    {
+//        foreach (var cookie in context.Request.Cookies.Keys)
+//        {
+//            context.Response.Cookies.Delete(cookie);
+//        }
+//        _clearCookies = true;
+//    }
+//    return next();
+//});
+
 
 app.MapControllerRoute(
     name: "default",

@@ -42,32 +42,15 @@ namespace RevisioneNew.Controllers
 
                 int pageSize = length != null ? Convert.ToInt32(length) : 0;
                 int skip = start != null ? Convert.ToInt32(start) : 0;
-                int recordsTotal = 0;
                 PagingInfo pagingInfo = new PagingInfo()
                 {
                     Count = pageSize,
                     PageNumber = (skip/pageSize)+1,
                     ReturnTotalRecordCount =true
                 };
-                EntityCollection opportunities = _opportunityService.GetaAllOpportunities(sortColumn, pagingInfo,searchValue, sortColumnDirection);
-
-                List<OpportunityModel> opportunityList = new List<OpportunityModel>();
-                foreach (var item in opportunities.Entities)
-                {
-                    opportunityList.Add(new OpportunityModel
-                    {
-                        Topic = item.GetAttributeValue<string>("name"),
-                        Description = item.GetAttributeValue<string>("description"),
-                        Status = ((OpportunityStateCode)item.GetAttributeValue<OptionSetValue>("statecode").Value).ToString(),
-                        CreatedON = item.GetAttributeValue<DateTime>("createdon"),
-                        Id = item.GetAttributeValue<Guid>("opportunityid")
-                    });
-                }
-
-                recordsTotal = opportunities.TotalRecordCount;
-                var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = opportunityList };
+                Datatable<OpportunityModel> opportunities = _opportunityService.GetaAllOpportunities(draw, sortColumn, pagingInfo, searchValue, sortColumnDirection);
                 
-                return Json(jsonData);
+                return Json(opportunities);
 
             }
             catch (Exception ex)

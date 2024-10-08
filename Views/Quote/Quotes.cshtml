@@ -1,7 +1,7 @@
 ﻿
 <main>
     <div class="section-header">
-        <h1>Home</h1>
+        <h1>Quotes</h1>
     </div>
     <div class="section-body">
         <table class="table table-bordered" id="table-1" style="width:100%">
@@ -53,10 +53,10 @@
                     orderable: false
                     }],
                 "columns": [
-                    { "data": "quoteNumber", "name": "QuoteNumber", "autoWidth": true },
-                    { "data": "quoteName", "name": "QuoteName", "autoWidth": true },
+                    { "data": "quoteNumber", "name": "quotenumber", "autoWidth": true },
+                    { "data": "quoteName", "name": "name", "autoWidth": true },
                     {
-                        "data": "totalAmount", "name": "TotalAmount", "autoWidth": true,
+                        "data": "totalAmount", "name": "totalamount", "autoWidth": true,
                         render: function (data) {
                             if (data == null) {
                                 return `<b>Amount is not available</b>`
@@ -67,7 +67,7 @@
                         }
                     },
                     {
-                        "data": "status", "name": "Status", "autoWidth": true,
+                        "data": "status", "name": "statecode", "autoWidth": true,
                         render: function (data) {
                             if (data == '@QuoteStateCode.Draft.ToString()')
                             {
@@ -88,10 +88,10 @@
                         }
                     },
                     {
-                        "data": "createdOn", "name": "CreatedOn", "autoWidth": true,
+                        "data": "createdOn", "name": "createdon", "autoWidth": true,
                         render: function (data) {
                             let date = new Date(data.split('T')[0]);
-                            return date.toLocaleDateString()
+                            return date.toLocaleDateString('en-GB')
                         }
                     },
                     {

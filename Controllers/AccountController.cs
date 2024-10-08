@@ -2,18 +2,16 @@
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Mvc;
 using RevisioneNew.CustomFilters;
+using RevisioneNew.Models;
 
 namespace RevisioneNew.Controllers
 {
     public class AccountController : Controller
     {
+
         [Route("/Login")]
         public IActionResult Login()
         {
-            //foreach (var cookie in Request.Cookies.Keys)
-            //{
-            //    Response.Cookies.Delete(cookie);
-            //}
             return View();
         }
 
@@ -32,16 +30,5 @@ namespace RevisioneNew.Controllers
             Response.Cookies.Append(cookieName, cookieValue, options);
             HttpContext.ChallengeAsync("OpenIdConnect", new AuthenticationProperties { RedirectUri = Url.Action("Index","Home") }).Wait();
         }
-
-        //public void Logout() {
-
-        //    HttpContext.SignOutAsync("OpenIdConnect", new AuthenticationProperties { RedirectUri = Url.Action("Login","Account") }).Wait();
-        //    //foreach (var cookie in Request.Cookies.Keys)
-        //    //{
-        //    //    Response.Cookies.Delete(cookie);
-        //    //}
-        //    //return SignOut(new AuthenticationProperties { RedirectUri = Url.Action("Login", "Account") }, OpenIdConnectDefaults.AuthenticationScheme);
-        //}
-
     }
 }

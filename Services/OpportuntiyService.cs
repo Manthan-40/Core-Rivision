@@ -2,6 +2,7 @@
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using RevisioneNew.Interfaces;
+using RevisioneNew.Models;
 
 namespace RevisioneNew.Services
 {
@@ -11,34 +12,30 @@ namespace RevisioneNew.Services
         {
         }
 
-        public EntityCollection GetaAllOpportunities(string? sortColumn, PagingInfo pagingInfo, string searchValue = null, string sortOrder = "asc")
+        public Datatable<OpportunityModel> GetaAllOpportunities(string Draw, string? sortColumn, PagingInfo pagingInfo, string searchValue = null, string sortOrder = "asc")
         {
-            QueryExpression getAllOpportunity = new QueryExpression("opportunity");
-            OrderType order = sortOrder == "asc"?OrderType.Ascending : OrderType.Descending;
-            
-            getAllOpportunity.PageInfo = pagingInfo;
+            EntityCollection allOpportunities = GetAll("opportunity", new ColumnSet("name", "description", "statecode", "createdon"), pagingInfo, sortColumn, ["name", "description"], searchValue, sortOrder);
 
-            getAllOpportunity.ColumnSet = new ColumnSet("name", "description", "statecode", "createdon");
-
-            if(searchValue != null)
+            List<OpportunityModel> opportunityList = new List<OpportunityModel>();
+            foreach (var item in allOpportunities.Entities)
             {
-                FilterExpression filters = new FilterExpression(LogicalOperator.Or);
-
-                filters.AddCondition("name",ConditionOperator.Like,"%"+searchValue+"%");
-                filters.AddCondition("description",ConditionOperator.Like,"%"+searchValue + "%");
-
-                getAllOpportunity.Criteria.AddFilter(filters);
+                opportunityList.Add(new OpportunityModel
+                {
+                    Topic = item.GetAttributeValue<string>("name"),
+                    Description = item.GetAttributeValue<string>("description"),
+                    Status = ((OpportunityStateCode)item.GetAttributeValue<OptionSetValue>("statecode").Value).ToString(),
+                    CreatedON = item.GetAttributeValue<DateTime>("createdon"),
+                    Id = item.GetAttributeValue<Guid>("opportunityid")
+                });
             }
-
-
-            if(sortColumn != null)
+            Datatable<OpportunityModel> resultTable = new Datatable<OpportunityModel>
             {
-                getAllOpportunity.AddOrder(sortColumn,order);
-            }
-
-            EntityCollection allOpportunities = _serviceClient.RetrieveMultiple(getAllOpportunity);
-
-            return allOpportunities;
+                Draw = Draw,
+                RecordsFiltered = allOpportunities.TotalRecordCount,
+                RecordsTotal = allOpportunities.TotalRecordCount,
+                Data = opportunityList
+            };
+            return resultTable;
         }
     }
 }

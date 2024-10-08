@@ -29,24 +29,19 @@
 
                                 @using (Html.BeginForm(null, null, FormMethod.Post, htmlAttributes: new { @class = "needs-validations ", id = "Loginform", novalidate = true }))
                                 {
-                                    if (ViewBag.Messege == "Incorrect Cradentials")
-                                    {
-                                        <div class="text-center py-2 rounded mb-3" style="background: #fc544b19; border: 1px solid #fc544b ">
-                                            <label class="form-label text-danger m-0">@(ViewBag.Messege)</label>
-                                        </div>
-                                    }
-                                    if (ViewBag.ForgortPswd == "Check Your Mail For Password")
-                                    {
-                                        <div class="text-center py-2 rounded mb-3" style="background: #fc544b19; border: 1px solid #fc544b ">
-                                            <label class="form-label text-danger m-0">@(ViewBag.ForgortPswd)</label>
-                                        </div>
-                                    }
 
-                            <div class="form-group">
-                                <div class="w-100 text-center">
-                                    <a class="text-white bg-primary text-center px-5 py-2 w-100" style="text-decoration:none" asp-area="" asp-controller="Account" asp-action="LoginCallBack">LogIn</a>
-                                </div>
-                            </div>
+                                    <div class="form-group">
+                                        <div class="w-100 text-center">
+                                            <a class="btn btn-primary w-100" style="text-decoration:none" asp-area="" asp-controller="Account" asp-action="LoginCallBack">LogIn</a>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="w-100 text-center">
+                                            <a class="btn btn-warning w-100" style="text-decoration:none" asp-area="" asp-controller="Account" asp-action="LoginCallBack">Support</a>
+                                        </div>
+                                    </div>
+
                                 }
                             </div>
                         </div>

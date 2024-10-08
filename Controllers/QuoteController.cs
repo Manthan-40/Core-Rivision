@@ -65,20 +65,7 @@ namespace RevisioneNew.Controllers
                     PageNumber = (skip/pageSize)+1,
                     ReturnTotalRecordCount =true
                 };
-                var QuoteData = _quoteService.getQuoteData(draw, "name", pagingInfo, searchValue); 
-                //var quoteData = quoteList.AsQueryable();
-                //if (!(string.IsNullOrEmpty(sortColumn) && string.IsNullOrEmpty(sortColumnDirection)))
-                //{
-                //    quoteData = quoteData.OrderBy(sortColumn + " " + sortColumnDirection);
-
-                //}
-                //if (!string.IsNullOrEmpty(searchValue))
-                //{
-                //    quoteData = quoteData.Where(m => m.QuoteName.Contains(searchValue));
-                //}
-                //recordsTotal = quoteData.Count();
-                //var data = quoteData.Skip(skip).Take(pageSize).ToList();
-                //var jsonData = new { draw = draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data };
+                Datatable<Quote> QuoteData = _quoteService.getQuoteData(draw, sortColumn, pagingInfo, searchValue,sortColumnDirection); 
 
                 return Json(QuoteData);
             }

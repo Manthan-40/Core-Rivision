@@ -16,32 +16,7 @@ namespace RevisioneNew.Services
 
         public Datatable<Quote> getQuoteData(string Draw, string? sortColumn, PagingInfo pagingInfo, string searchValue = null, string sortOrder = "asc")
         {
-
-            QueryExpression getAllQuotes= new QueryExpression("quote");
-            OrderType order = sortOrder == "asc" ? OrderType.Ascending : OrderType.Descending;
-
-            getAllQuotes.PageInfo = pagingInfo;
-
-            getAllQuotes.ColumnSet = new ColumnSet("name", "totalamount", "statecode", "createdon", "quotenumber", "statuscode");
-
-            if (!string.IsNullOrEmpty(searchValue))
-            {
-                FilterExpression filters = new FilterExpression(LogicalOperator.Or);
-
-                filters.AddCondition("name", ConditionOperator.Like, "%" + searchValue + "%");
-                filters.AddCondition("totalamount", ConditionOperator.Like, "%" + Convert.ToDecimal(searchValue) + "%");
-                filters.AddCondition("quotenumber", ConditionOperator.Like, "%" + searchValue + "%");
-
-                getAllQuotes.Criteria.AddFilter(filters);
-            }
-
-
-            if (sortColumn != null)
-            {
-                getAllQuotes.AddOrder(sortColumn, order);
-            }
-
-            EntityCollection allQuote = _serviceClient.RetrieveMultiple(getAllQuotes);
+            EntityCollection allQuote = GetAll("quote", new ColumnSet("name", "totalamount", "statecode", "createdon", "quotenumber", "statuscode"), pagingInfo, sortColumn, ["name", "quotenumber"], searchValue, sortOrder);
 
             List<Quote> quoteList = new List<Quote>();
             foreach (var item in allQuote.Entities)
