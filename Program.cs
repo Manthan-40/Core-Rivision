@@ -98,10 +98,17 @@ app.UseAuthorization();
 //    return next();
 //});
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+        name: "dafault",
+        pattern: "{controller=Account}/{action=Login}"
+        );
+});
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}");
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Account}/{action=Login}");
 app.MapRazorPages();
 
 app.Run();
