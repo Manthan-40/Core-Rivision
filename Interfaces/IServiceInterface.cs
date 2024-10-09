@@ -1,6 +1,8 @@
 ﻿
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
+using RevisioneNew.Models;
 
 namespace RevisioneNew.Interfaces
 {
@@ -11,5 +13,13 @@ namespace RevisioneNew.Interfaces
         public EntityCollection GetAll(string entityName, ColumnSet columnSet, PagingInfo pagingInfo, string? sortColumn, string[] Searchcolumns, string searchValue = null, string sortOrder = "asc");
 
         public Entity GetById(string entityName, Guid entityID, ColumnSet columnSet);
+
+        public Entity Get(string entityName, ColumnSet columnSet, LogicalOperator filterOperator = LogicalOperator.Or, ConditionExpression[] conditions =null);
+        public Entity GetCurrentUser(string email);
+
+        public void Update(Entity entity);
+        public bool SendMail(Entity Sender, Entity Receiver, Entity Template = null );
+        public bool SendSupportMail(SupportSignIn ssi);
+
     }
 }

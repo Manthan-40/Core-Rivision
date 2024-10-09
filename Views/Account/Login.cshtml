@@ -10,6 +10,8 @@
     <title>Login</title>
 
     <!-- General CSS Files -->
+
+    <link rel="stylesheet" href="~/assets/modules/izitoast/css/iziToast.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/modules/bootstrap/css/bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/modules/fontawesome/css/all.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/css/style.css" asp-append-version="true" />
@@ -38,7 +40,7 @@
 
                                     <div class="form-group">
                                         <div class="w-100 text-center">
-                                            <a class="btn btn-warning w-100" style="text-decoration:none" asp-area="" asp-controller="Account" asp-action="LoginCallBack">Support</a>
+                                            <a class="btn btn-warning w-100" style="text-decoration:none" asp-area="" asp-controller="Account" asp-action="Support">Support Siging In</a>
                                         </div>
                                     </div>
 
@@ -62,8 +64,19 @@
     <script src="~/assets/js/stisla.js"></script>
     <script src="~/assets/js/scripts.js"></script>
     <script src="~/assets/js/custom.js"></script>
+    <script src="~/assets/modules/izitoast/js/iziToast.min.js"></script>
 
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script>
+        if ('@(Convert.ToBoolean(TempData["SupportMailSended"]) == true)' == 'True')
+        {
+            iziToast.success({
+                title: 'Success :',
+                message: "Support Message is sended Successfully",
+                position: 'topRight'
+            });
+        }
+    </script>
 </body>
 </html>
