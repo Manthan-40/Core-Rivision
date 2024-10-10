@@ -34,12 +34,12 @@ namespace RevisioneNew.Controllers
         [HttpPost]
         public JsonResult LoadLeadList()
         {
+            string a = "1";
+            customoptions ca = (customoptions)Convert.ToInt32(a);
 
             foreach(customoptions i in Enum.GetValues(typeof(customoptions)))
             {
-                FieldInfo fi = i.GetType().GetField(i.ToString()); 
-                var attributes = fi.GetCustomAttributes(typeof(DisplayAttribute), false) as DisplayAttribute[];
-                int desiption = attributes.First().Order;
+                int attributes = (((customoptions)Convert.ToInt32(a)).GetType().GetField(((customoptions)Convert.ToInt32(a)).ToString()).GetCustomAttributes(typeof(DisplayAttribute), false) as DisplayAttribute[]).First().Order;
 
             }
 
@@ -64,7 +64,7 @@ namespace RevisioneNew.Controllers
                     ReturnTotalRecordCount = true
                 };
 
-                Datatable<LeadModel> leads = _leadService.GetaAllLeades(draw, "subject", pagingInfo, searchValue, sortColumnDirection);
+                Datatable<LeadModel> leads = _leadService.GetaAllLeades(draw, sortColumn, pagingInfo, searchValue, sortColumnDirection);
 
                 return Json(leads);
 
@@ -191,7 +191,10 @@ namespace RevisioneNew.Controllers
         public IActionResult AddorEditLead(LeadModel lead)
         {
             try
-                {
+                 {
+                    LeadModel leadmodelForList = _leadService.GetEmptyModel();
+                    lead.AccountList = leadmodelForList.AccountList;
+                    lead.ContactList = leadmodelForList.ContactList;
                 if (ModelState.IsValid)
                 {
                     if(lead.Id == new Guid())
@@ -206,9 +209,6 @@ namespace RevisioneNew.Controllers
                     }
                     return RedirectToAction("leades", "Lead");
                 }
-                LeadModel leadmodelForList = _leadService.GetEmptyModel();
-                lead.AccountList = leadmodelForList.AccountList;
-                lead.ContactList = leadmodelForList.ContactList;
                 return View(lead);
             }
             catch (Exception)

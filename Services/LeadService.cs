@@ -183,8 +183,14 @@ namespace RevisioneNew.Services
             newLead["companyname"] = model.CompanyName;
             newLead["description"] = model.Description;
             newLead["budgetamount"] = model.EstimatedBudget;
-            newLead["parentaccountid"] = model.AccountID != new Guid() ? new EntityReference("account", model.AccountID) : new EntityReference();
-            newLead["parentcontactid"] = model.ContactID != new Guid() ? new EntityReference("contact", model.ContactID) : new EntityReference();
+            if (model.AccountID.HasValue)
+            {
+                newLead["parentaccountid"] = new EntityReference("account", model.AccountID.Value);
+            }
+            if (model.ContactID.HasValue)
+            {
+                newLead["parentcontactid"] = new EntityReference("contact", model.ContactID.Value);
+            }
 
             Create(newLead);
 
@@ -203,8 +209,14 @@ namespace RevisioneNew.Services
             newLead["companyname"] = model.CompanyName;
             newLead["description"] = model.Description;
             newLead["budgetamount"] = model.EstimatedBudget;
-            newLead["parentaccountid"] = model.AccountID!=new Guid() ?new EntityReference("account", model.AccountID):new EntityReference();
-            newLead["parentcontactid"] = model.ContactID!= new Guid() ? new EntityReference("contact", model.ContactID) : new EntityReference();
+            if (model.AccountID.HasValue)
+            {
+                newLead["parentaccountid"] = new EntityReference("account", model.AccountID.Value);
+            }
+            if (model.ContactID.HasValue)
+            {
+                newLead["parentcontactid"] = new EntityReference("contact", model.ContactID.Value);
+            }
 
             Update(newLead);
         }

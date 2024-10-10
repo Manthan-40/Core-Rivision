@@ -79,10 +79,10 @@
                     orderable: false
                     }],
                 "columns": [
-                    { "data": "topicName", "name": "TopicName", "autoWidth": true },
-                    { "data": "fullName", "name": "FullName", "autoWidth": true },
+                    { "data": "topicName", "name": "subject", "autoWidth": true },
+                    { "data": "fullName", "name": "fullname", "autoWidth": true },
                     {
-                        "data": "status", "name": "Status", "autoWidth": true,
+                        "data": "status", "name": "satecode", "autoWidth": true,
                         render: function (data) {
                             if (data == '@LeadStateCode.Open.ToString()')
                             {
@@ -99,7 +99,7 @@
                         }
                     },
                     {
-                        "data": "createdON", "name": "CreatedON", "autoWidth": true,
+                        "data": "createdON", "name": "modifiedon", "autoWidth": true,
                         render: function (data) {
                             let date = new Date(data.split('T')[0]);
                             return date.toLocaleDateString()
