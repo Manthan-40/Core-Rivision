@@ -182,7 +182,7 @@ namespace RevisioneNew.Services
             newLead["emailaddress1"] = model.EmailAddress;
             newLead["companyname"] = model.CompanyName;
             newLead["description"] = model.Description;
-            newLead["budgetamount"] = model.EstimatedBudget;
+            newLead["budgetamount"] = new Money(model.EstimatedBudget ?? 0);
             if (model.AccountID.HasValue)
             {
                 newLead["parentaccountid"] = new EntityReference("account", model.AccountID.Value);
@@ -208,7 +208,7 @@ namespace RevisioneNew.Services
             newLead["emailaddress1"] = model.EmailAddress;
             newLead["companyname"] = model.CompanyName;
             newLead["description"] = model.Description;
-            newLead["budgetamount"] = model.EstimatedBudget;
+            newLead["budgetamount"] = new Money(model.EstimatedBudget ?? 0);
             if (model.AccountID.HasValue)
             {
                 newLead["parentaccountid"] = new EntityReference("account", model.AccountID.Value);

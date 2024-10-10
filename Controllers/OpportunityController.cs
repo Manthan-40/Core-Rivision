@@ -9,6 +9,7 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 using RevisioneNew.CustomFilters;
     using Microsoft.AspNetCore.Authorization;
 using RevisioneNew.Interfaces;
+using RevisioneNew.Services;
 
 namespace RevisioneNew.Controllers
 {
@@ -130,5 +131,108 @@ namespace RevisioneNew.Controllers
             }
 
         }
+
+        // Action to display Opportunity details
+        public IActionResult Details(string opportunityId = null)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(opportunityId))
+                {
+                    Guid OpportunityGUID = new Guid(opportunityId);
+                    OpportunityModel opportunity = _opportunityService.GetOpportunityById(OpportunityGUID);
+
+                    ViewBag.Opportunity = "active";
+                    return View(opportunity);
+                }
+                return BadRequest("Can't find OpportunityID '" + opportunityId + "'");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        // Action to add or edit an Opportunity (GET)
+        public IActionResult AddOrEditOpportunity(string opportunityId = null)
+        {
+            try
+            {
+                if (opportunityId != null)
+                {
+                    Guid OpportunityGUID = new Guid(opportunityId);
+                    OpportunityModel opportunity = _opportunityService.GetOpportunityById(OpportunityGUID);
+
+                    ViewBag.Opportunity = "active";
+                    return View(opportunity);
+                }
+                else
+                {
+                    OpportunityModel opportunity = _opportunityService.GetEmptyModel();
+
+                    ViewBag.Opportunity = "active";
+                    return View(opportunity);
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        // Action to handle Opportunity form submission (POST)
+        [HttpPost]
+        public IActionResult AddOrEditOpportunity(OpportunityModel opportunity)
+        {
+            try
+            {
+                OpportunityModel opportunityForList = _opportunityService.GetEmptyModel();
+                opportunity.AccountList = opportunityForList.AccountList;
+                opportunity.ContactList = opportunityForList.ContactList;
+                opportunity.PriceListitems = opportunityForList.PriceListitems;
+                opportunity.CurrencyList = opportunityForList.CurrencyList;
+
+                if (ModelState.IsValid)
+                {
+                    if (opportunity.Id == new Guid())
+                    {
+                        _opportunityService.CreateOpportunity(opportunity);
+                        TempData["createdOpportunity"] = true.ToString();
+                    }
+                    else
+                    {
+                        _opportunityService.UpdateOpportunity(opportunity);
+                        TempData["updateOpportunity"] = true.ToString();
+                    }
+                    return RedirectToAction("Opportunities", "Opportunity");
+                }
+                return View(opportunity);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        // Action to delete an Opportunity
+        [HttpPost]
+        public IActionResult DeleteOpportunity(string opportunityId)
+        {
+            try
+            {
+                if (opportunityId != null)
+                {
+                    Guid opportunityGuid = new Guid(opportunityId);
+                    _opportunityService.DeleteOpportunity(opportunityGuid);
+                    return Ok("Data deleted successfully.");
+                }
+                return BadRequest("Opportunity not found.");
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }

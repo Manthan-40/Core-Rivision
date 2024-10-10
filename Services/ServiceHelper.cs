@@ -125,6 +125,35 @@ namespace RevisioneNew.Services
             return contacts;
         }
 
+        public List<CurrencyModel> GetAllCurrencies()
+        {
+            EntityCollection currencyEntities = GetAll("transactioncurrency", new ColumnSet("currencyname"));
+            List<CurrencyModel> currencies = new List<CurrencyModel>();
+            foreach (var a in currencyEntities.Entities)
+            {
+                currencies.Add(new CurrencyModel
+                {
+                    CurrencyId = a.Id,
+                    CurrencyName = a.Contains("currencyname") ? a.GetAttributeValue<string>("currencyname") : string.Empty
+                });
+            }
+            return currencies;
+        }
+
+        public List<PriceLevelModel> GetAllPriceLevels()
+        {
+            EntityCollection pricelevelEntities = GetAll("pricelevel", new ColumnSet("name"));
+            List<PriceLevelModel> pricelevels = new List<PriceLevelModel>();
+            foreach (var a in pricelevelEntities.Entities)
+            {
+                pricelevels.Add(new PriceLevelModel
+                {
+                    PriceLevelId = a.Id,
+                    PriceLevelName = a.Contains("name") ? a.GetAttributeValue<string>("name") : string.Empty
+                });
+            }
+            return pricelevels;
+        }
         public Microsoft.Xrm.Sdk.Entity GetById(string entityName, Guid entityID, ColumnSet columnSet)
         {
             try
