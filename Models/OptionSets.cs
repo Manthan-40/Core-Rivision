@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace RevisioneNew.Models
 {
@@ -57,6 +58,22 @@ namespace RevisioneNew.Models
 
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Qualified = 3
+    }
+
+    public enum customoptions
+    {
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        [Display(Order = 1)]
+        Critical = 1,
+
+        [Display(Order = 2)]
+        High = 2,
+
+        [Display(Order = 4)]
+        Medium = 3,
+
+        [Display(Order = 3)]
+        Low = 4,
     }
     public class OptionSets
     {

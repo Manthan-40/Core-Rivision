@@ -12,22 +12,45 @@ namespace RevisioneNew.Services
     public class ServiceHelper : IServiceInterface
     {
         protected readonly ServiceClient _serviceClient;
-        public ServiceHelper(ServiceClient serviceClient) {
+        public ServiceHelper(ServiceClient serviceClient)
+        {
             _serviceClient = serviceClient;
+        }
+
+        public void Create(Entity entity)
+        {
+            try
+            {
+                _serviceClient.Create(entity);
+
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public void Delete(string entityName, Guid entityID)
         {
-            _serviceClient.Delete(entityName, entityID);
+            try
+            {
+                _serviceClient.Delete(entityName, entityID);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
 
         public Microsoft.Xrm.Sdk.Entity Get(string entityName, ColumnSet columnSet, LogicalOperator filterOperator = LogicalOperator.Or, ConditionExpression[] conditions = null)
         {
-            
+
             QueryExpression query = new QueryExpression(entityName);
             query.ColumnSet = columnSet;
 
-            if(conditions != null)
+            if (conditions != null)
             {
                 FilterExpression filters = new FilterExpression(filterOperator);
 
@@ -42,22 +65,23 @@ namespace RevisioneNew.Services
 
         }
 
-        public EntityCollection GetAll(string entityName, ColumnSet columnSet, PagingInfo pagingInfo, string? sortColumn, string[]Searchcolumns, string searchValue = null, string sortOrder = "asc")
+        public EntityCollection GetAll(string entityName, ColumnSet columnSet, PagingInfo pagingInfo = null, string? sortColumn = null, string[] Searchcolumns = null, string searchValue = null, string sortOrder = "asc")
         {
             QueryExpression getAllDataQuery = new QueryExpression(entityName);
             OrderType order = sortOrder == "asc" ? OrderType.Ascending : OrderType.Descending;
-
-            getAllDataQuery.PageInfo = pagingInfo;
-
+            if (pagingInfo != null)
+            {
+                getAllDataQuery.PageInfo = pagingInfo;
+            }
             getAllDataQuery.ColumnSet = columnSet;
 
-            if (!string.IsNullOrEmpty(searchValue) && Searchcolumns.Length>0)
+            if (!string.IsNullOrEmpty(searchValue) && Searchcolumns.Length > 0)
             {
                 FilterExpression filters = new FilterExpression(LogicalOperator.Or);
 
                 foreach (var name in Searchcolumns)
                 {
-                    filters.AddCondition(name, ConditionOperator.Like, "%" + searchValue + "%"); 
+                    filters.AddCondition(name, ConditionOperator.Like, "%" + searchValue + "%");
                 }
 
                 getAllDataQuery.Criteria.AddFilter(filters);
@@ -71,20 +95,58 @@ namespace RevisioneNew.Services
             return _serviceClient.RetrieveMultiple(getAllDataQuery);
         }
 
+        public List<AccountModel> GetAllAccounts()
+        {
+            EntityCollection acountEntities = GetAll("account", new ColumnSet("name"));
+            List<AccountModel> accounts = new List<AccountModel>();
+            foreach (var a in acountEntities.Entities)
+            {
+                accounts.Add(new AccountModel
+                {
+                    AccountId = a.Id,
+                    AccountName = a.Contains("name") ? a.GetAttributeValue<string>("name") : string.Empty
+                });
+            }
+            return accounts;
+        }
+
+        public List<ContactModel> GetAllContacts()
+        {
+            EntityCollection contactEntities = GetAll("contact", new ColumnSet("fullname"));
+            List<ContactModel> contacts = new List<ContactModel>();
+            foreach (var a in contactEntities.Entities)
+            {
+                contacts.Add(new ContactModel
+                {
+                    ContactId = a.Id,
+                    FullName = a.Contains("fullname") ? a.GetAttributeValue<string>("fullname") : string.Empty
+                });
+            }
+            return contacts;
+        }
+
         public Microsoft.Xrm.Sdk.Entity GetById(string entityName, Guid entityID, ColumnSet columnSet)
         {
-            return _serviceClient.Retrieve(entityName, entityID, columnSet);
+            try
+            {
+                return _serviceClient.Retrieve(entityName, entityID, columnSet);
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public Microsoft.Xrm.Sdk.Entity GetCurrentUser(string email)
         {
             QueryExpression query = new QueryExpression("contact");
             query.ColumnSet = new ColumnSet("firstname", "lastname", "emailaddress1", "md_isfirsttimelogin");
-            query.Criteria.AddCondition("emailaddress1", ConditionOperator.Equal,email);
+            query.Criteria.AddCondition("emailaddress1", ConditionOperator.Equal, email);
 
             EntityCollection entities = _serviceClient.RetrieveMultiple(query);
-            
-            return entities.Entities.Count>0?entities.Entities[0]:new Entity();
+
+            return entities.Entities.Count > 0 ? entities.Entities[0] : new Entity();
         }
 
         public bool SendMail(Microsoft.Xrm.Sdk.Entity Sender, Microsoft.Xrm.Sdk.Entity Receiver, Microsoft.Xrm.Sdk.Entity Template = null)
@@ -92,7 +154,7 @@ namespace RevisioneNew.Services
             try
             {
                 Entity ReceiverContact = new Entity();
-                if(Receiver.LogicalName == "systemuser")
+                if (Receiver.LogicalName == "systemuser")
                 {
                     string sendMail = Receiver.Contains("internalemailaddress") ? Receiver.GetAttributeValue<string>("internalemailaddress") : String.Empty;
                     ReceiverContact = Get("contact", new ColumnSet(false), LogicalOperator.And, [new ConditionExpression("emailaddress1", ConditionOperator.Equal, sendMail)]);
@@ -170,7 +232,7 @@ namespace RevisioneNew.Services
 
             EntityReference ReceiverContact = ReceiverAccount.Contains("primarycontactid") ? ReceiverAccount.GetAttributeValue<EntityReference>("primarycontactid") : new EntityReference();
 
-            if(ReceiverContact.Id !=null && Sender.Id != null)
+            if (ReceiverContact.Id != null && Sender.Id != null)
             {
                 Entity Fromparty = new Entity("activityparty");
                 Entity Toparty = new Entity("activityparty");
@@ -189,7 +251,7 @@ namespace RevisioneNew.Services
                 email["directioncode"] = true;
 
                 email["subject"] = ssi.Subject;
-                email["description"] = "<p><b>Email: </b>" + ssi.Email + "</p><p><b>Description:</b> "+ssi.Description+"</p>";
+                email["description"] = "<p><b>Email: </b>" + ssi.Email + "</p><p><b>Description:</b> " + ssi.Description + "</p>";
 
                 //setting the Regarding as Contact
                 email["regardingobjectid"] = new EntityReference(ReceiverContact.LogicalName, ReceiverContact.Id);
@@ -215,7 +277,15 @@ namespace RevisioneNew.Services
 
         public void Update(Entity entity)
         {
-            _serviceClient.Update(entity);
+            try
+            {
+                _serviceClient.Update(entity);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
         }
     }
 }

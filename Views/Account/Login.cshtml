@@ -69,13 +69,15 @@
     <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
     <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
     <script>
-        if ('@(Convert.ToBoolean(TempData["SupportMailSended"]) == true)' == 'True')
+        @if (Convert.ToBoolean(TempData["SupportMailSended"]))
         {
+            <text>
             iziToast.success({
                 title: 'Success :',
                 message: "Support Message is sended Successfully",
                 position: 'topRight'
             });
+            </text>
         }
     </script>
 </body>

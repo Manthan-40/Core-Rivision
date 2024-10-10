@@ -21,7 +21,11 @@ namespace RevisioneNew.Controllers
             _serviceClient = serviceClient;
         }
 
-        [Route("/Login")]
+        //[Route("/Login")]
+        //[Route("[controller] / [action]")]
+        [Route("/")]
+        [Route("/Account/Login")]
+        [Route("/login")]
         public IActionResult Login()
         {
             return View();

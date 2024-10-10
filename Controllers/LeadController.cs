@@ -13,6 +13,7 @@ using RevisioneNew.CustomFilters;
 using System.Reflection;
 using System.ComponentModel;
 using RevisioneNew.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace RevisioneNew.Controllers
 {
@@ -30,19 +31,18 @@ namespace RevisioneNew.Controllers
            
         }
 
-
-
         [HttpPost]
         public JsonResult LoadLeadList()
         {
-            LeadStatusCode LeadStatusCod = LeadStatusCode.Canceled;
-            FieldInfo fi = LeadStatusCod.GetType().GetField(LeadStatusCod.ToString());
-            DescriptionAttribute[] attributes = fi.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
 
-            if (attributes != null && attributes.Any())
+            foreach(customoptions i in Enum.GetValues(typeof(customoptions)))
             {
-               string desiption = attributes.First().Description;
+                FieldInfo fi = i.GetType().GetField(i.ToString()); 
+                var attributes = fi.GetCustomAttributes(typeof(DisplayAttribute), false) as DisplayAttribute[];
+                int desiption = attributes.First().Order;
+
             }
+
 
             ViewBag.Lead = "active";
             try
@@ -157,6 +157,86 @@ namespace RevisioneNew.Controllers
 
                 throw;
             }
+        }
+
+        public IActionResult AddorEditLead(string LeadId = null)
+        {
+            try
+            {
+                if (LeadId != null)
+                {
+                    Guid LeadGUID = new Guid(LeadId);
+                    LeadModel lead = _leadService.GetLeadById(LeadGUID);
+
+                    ViewBag.Lead = "active";
+                    return View(lead);
+                }
+                else
+                {
+                    LeadModel lead = _leadService.GetEmptyModel();
+
+                    ViewBag.Lead = "active";
+                    return View(lead);
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddorEditLead(LeadModel lead)
+        {
+            try
+                {
+                if (ModelState.IsValid)
+                {
+                    if(lead.Id == new Guid())
+                    {
+                        _leadService.CreateLead(lead);
+                        TempData["createdLead"] = true.ToString();
+                    }
+                    else
+                    {
+                        _leadService.UpdateLead(lead);
+                        TempData["updateLead"] = true.ToString();
+                    }
+                    return RedirectToAction("leades", "Lead");
+                }
+                LeadModel leadmodelForList = _leadService.GetEmptyModel();
+                lead.AccountList = leadmodelForList.AccountList;
+                lead.ContactList = leadmodelForList.ContactList;
+                return View(lead);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPost]
+        public IActionResult DeleteLead(string leadId)
+        {
+            try
+            {
+                if (leadId != null)
+                {
+                    Guid leadGuid = new Guid(leadId);
+                    _leadService.DeleteLead(leadGuid);
+                    return Ok("Data deleted successfully.");
+                }
+                return BadRequest("Quote is not found.");
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
+
         }
 
     }

@@ -34,12 +34,12 @@
         <div class="row">
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.CreatedON, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.CreatedON, "", new { htmlAttributes = new {type="date", @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.CreatedON, "", new { htmlAttributes = new {type="date", @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.CreatedON, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.Status, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.Status, "", new { htmlAttributes = new { @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.Status, "", new { htmlAttributes = new { @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.Status, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -48,12 +48,12 @@
         <div class="row">
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.FirstName, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.FirstName, "", new { htmlAttributes = new { @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.FirstName, "", new { htmlAttributes = new { @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.FirstName, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.LastName, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.LastName, "", new { htmlAttributes = new { @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.LastName, "", new { htmlAttributes = new { @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.LastName, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -62,12 +62,12 @@
         <div class="row">
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.CompanyName, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.CompanyName, "", new { htmlAttributes = new { @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.CompanyName, "", new { htmlAttributes = new { @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.CompanyName, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.JobTitle, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.JobTitle, "", new { htmlAttributes = new { @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.JobTitle, "", new { htmlAttributes = new { @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.JobTitle, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -76,12 +76,12 @@
         <div class="row">
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.EmailAddress, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.EmailAddress, "", new { htmlAttributes = new { @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.EmailAddress, "", new { htmlAttributes = new { @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.EmailAddress, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.Telephone, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.Telephone, "", new { htmlAttributes = new { @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.Telephone, "", new { htmlAttributes = new { @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.Telephone, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -90,12 +90,12 @@
         <div class="row">
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.AccountName, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.AccountName, "", new { htmlAttributes = new { @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.AccountName, "", new { htmlAttributes = new { @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.AccountName, "", new { @class = "text-danger" })
             </div>
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.ContactName, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.ContactName, "", new { htmlAttributes = new { @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.ContactName, "", new { htmlAttributes = new { @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.ContactName, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -109,9 +109,13 @@
             </div>
             <div class="form-group col-6">
                 @Html.LabelFor(t => t.Description, htmlAttributes: new { @class = "form-label" })
-                @Html.EditorFor(t => t.Description, "", new { htmlAttributes = new { @class = "form-control", disabled = true } })
+                @Html.EditorFor(t => t.Description, "", new { htmlAttributes = new { @class = "form-control", disabled = true} })
                 @Html.ValidationMessageFor(t => t.Description, "", new { @class = "text-danger" })
             </div>
+        </div>
+
+        <div class="w-100 text-center">
+            <a class="btn btn-outline-primary btn-lg px-5" asp-action="Leades" asp-controller="Lead"><i class="fas fa-arrow-left"></i> Back</a>
         </div>
     </form>
 
