@@ -12,12 +12,8 @@
     <link rel="stylesheet" href="~/assets/modules/fontawesome/css/all.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/css/components.css" asp-append-version="true" />
-
     <link rel="stylesheet" href="~/assets/modules/bootstrap-daterangepicker/daterangepicker.css"asp-append-version="true" >
-
     <link rel="stylesheet" href="~/assets/modules/izitoast/css/iziToast.min.css" asp-append-version="true" />
-
-
     <link rel="stylesheet" href="~/assets/modules/datatables/datatables.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/modules/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/assets/modules/datatables/Select-1.2.4/css/select.bootstrap4.min.css" asp-append-version="true" />
@@ -102,11 +98,11 @@
                             <a class="nav-link" asp-area="" asp-controller="Quote" asp-action="Quotes"><i class="fas fa-file-invoice"></i><span>Quote</span></a>
                         </li>
                         <li class="@(ViewBag.Order ?? "")">
-                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Order"><i class="fas fa-boxes"></i><span>Order</span></a>
+                            <a class="nav-link" asp-area="" asp-controller="Order" asp-action="Orders"><i class="fas fa-boxes"></i><span>Order</span></a>
                         </li>
-                        <li class="@(ViewBag.Invoice ?? "")">
+                        @*<li class="@(ViewBag.Invoice ?? "")">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Invoice"><i class="fas fa-file-invoice-dollar"></i><span>Invoice</span></a>
-                        </li>
+                        </li>*@
 
                     </ul>
 

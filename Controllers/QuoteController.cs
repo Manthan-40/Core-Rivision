@@ -115,21 +115,30 @@ namespace RevisioneNew.Controllers
                 {
                     Guid quoteGuid = new(quoteID);
 
-                    WinQuoteRequest winQuoteRequest = new()
-                    {
-                        QuoteClose = new Entity("quoteclose")
-                        {
-                            Attributes =
-                            {
-                                {"subject", $"Quote Won (Won) - {quoteNumber}" },
-                                { "quoteid", new EntityReference("quote", quoteGuid) }
-                            }
-                        },
-                        Status = new OptionSetValue(-1)
-                    };
-                    _serviceClient.Execute(winQuoteRequest);
+                    //WinQuoteRequest winQuoteRequest = new()
+                    //{
+                    //    QuoteClose = new Entity("quoteclose")
+                    //    {
+                    //        Attributes =
+                    //        {
+                    //            {"subject", $"Quote Won (Won) - {quoteNumber}" },
+                    //            { "quoteid", new EntityReference("quote", quoteGuid) }
+                    //        }
+                    //    },
+                    //    Status = new OptionSetValue(-1)
+                    //};
+                    //_serviceClient.Execute(winQuoteRequest);
 
-                    return Ok($"Quote is successfully Won.");
+                    ConvertQuoteToSalesOrderRequest convertQuoteToSalesOrderRequest = new ConvertQuoteToSalesOrderRequest()
+                    {
+                        QuoteId = quoteGuid,
+                        ColumnSet = new ColumnSet("name", "ordernumber"),
+                        QuoteCloseStatus = new OptionSetValue(-1),
+                        QuoteCloseSubject= $"Quote Won (Won) - {quoteNumber}",
+                        QuoteCloseDate =DateTime.Now
+                    };
+                    ConvertQuoteToSalesOrderResponse convertQuoteToSalesOrderResponse = (ConvertQuoteToSalesOrderResponse)_serviceClient.Execute(convertQuoteToSalesOrderRequest);
+                    return Ok($"Quote is successfully Won and Order created with oreder-number : " + convertQuoteToSalesOrderResponse.Entity.GetAttributeValue<string>("ordernumber"));
                 }
                 return BadRequest("Quote not found");
             }

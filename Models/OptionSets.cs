@@ -59,6 +59,22 @@ namespace RevisioneNew.Models
         [System.Runtime.Serialization.EnumMemberAttribute()]
         Qualified = 3
     }
+    public enum OrderStateCode {
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Active = 0,
+
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Submitted = 1,
+
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Canceled = 2,
+
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Fulfilled = 3,
+        
+        [System.Runtime.Serialization.EnumMemberAttribute()]
+        Invoiced = 4
+    }
 
     public enum customoptions
     {

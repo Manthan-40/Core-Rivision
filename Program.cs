@@ -43,12 +43,13 @@ builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.Authentic
             return Task.CompletedTask;
         }
     };
-});
-
-builder.Services.Configure<CookieAuthenticationOptions>(options =>
-{
     
 });
+
+//builder.Services.Configure<CookieAuthenticationOptions>(options =>
+//{
+    
+//});
 
 builder.Services.AddScoped<ServiceClient>(option =>
 {
@@ -61,6 +62,7 @@ builder.Services.AddScoped<IServiceInterface, ServiceHelper>();
 builder.Services.AddScoped<IQuoteInterface, QuoteService>();
 builder.Services.AddScoped<ILeadInterface, LeadService>();
 builder.Services.AddScoped<IOpportunityInterface, OpportuntiyService>();
+builder.Services.AddScoped<IOrderInterface, OrderService>();
 //builder.Services.AddSingleton<SingleSignInModel>();
 
 builder.Services.AddRazorPages()
@@ -85,26 +87,6 @@ app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
-//app.Use((context, next) =>
-//{
-//    if (context.Request.Cookies.Count > 0 && !_clearCookies)
-//    {
-//        foreach (var cookie in context.Request.Cookies.Keys)
-//        {
-//            context.Response.Cookies.Delete(cookie);
-//        }
-//        _clearCookies = true;
-//    }
-//    return next();
-//});
-
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapControllerRoute(
-//        name: "dafault",
-//        pattern: "{controller=Account}/{action=Login}"
-//        );
-//});
 
 app.MapControllerRoute(
     name: "default",

@@ -37,13 +37,12 @@ namespace RevisioneNew.Controllers
             string a = "1";
             customoptions ca = (customoptions)Convert.ToInt32(a);
 
-            foreach(customoptions i in Enum.GetValues(typeof(customoptions)))
+            foreach(int i in Enum.GetValues(typeof(customoptions)))
             {
+                Console.WriteLine(i.ToString());
                 int attributes = (((customoptions)Convert.ToInt32(a)).GetType().GetField(((customoptions)Convert.ToInt32(a)).ToString()).GetCustomAttributes(typeof(DisplayAttribute), false) as DisplayAttribute[]).First().Order;
 
             }
-
-
             ViewBag.Lead = "active";
             try
             {
@@ -63,11 +62,9 @@ namespace RevisioneNew.Controllers
                     PageNumber = (skip / pageSize) + 1,
                     ReturnTotalRecordCount = true
                 };
-
                 Datatable<LeadModel> leads = _leadService.GetaAllLeades(draw, sortColumn, pagingInfo, searchValue, sortColumnDirection);
 
                 return Json(leads);
-
             }
             catch (Exception ex)
             {
@@ -200,12 +197,13 @@ namespace RevisioneNew.Controllers
                     if(lead.Id == new Guid())
                     {
                         _leadService.CreateLead(lead);
-                        TempData["createdLead"] = true.ToString();
+
                     }
                     else
                     {
                         _leadService.UpdateLead(lead);
-                        TempData["updateLead"] = true.ToString();
+                        TempData["LeadStatus"] = true.ToString();
+                        TempData["LeadData"] = "Lead is updated.";
                     }
                     return RedirectToAction("leades", "Lead");
                 }

@@ -39,26 +39,13 @@
     <script src="~/assets/modules/izitoast/js/iziToast.min.js"></script>
 
     <script>
-             @*@if (Convert.ToBoolean(TempData["updateLead"]))
+
+             @if (Convert.ToBoolean(TempData["LeadStatus"]))
              {
-                 <TEXT>
-                 TextiziToast.success({
-                     title: 'Success :',
-                     message: "Your Lead is Updated.",
-                     position: 'topRight'
-                 });
-                 </TEXT>
+                    <text>
+        iziToast.success({ title: 'Success :', message: '@TempData["LeadData"]?.ToString()', position: 'topRight' });
+                 </text>
              }
-            else if (Convert.ToBoolean(TempData["createdLead"]))
-             {
-                <TEXT>
-                TextiziToast.success({
-                    title: 'Success :',
-                    message: "New Lead is Created",
-                    position: 'topRight'
-                });
-                </TEXT>
-             }*@
         let leadTable;
         $(document).ready(function () {
             leadTable = $("#table-1").DataTable({

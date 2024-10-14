@@ -197,20 +197,22 @@ namespace RevisioneNew.Controllers
                     if (opportunity.Id == new Guid())
                     {
                         _opportunityService.CreateOpportunity(opportunity);
-                        TempData["createdOpportunity"] = true.ToString();
+                        TempData["OpportunityStatus"] = true.ToString();
+                        TempData["OpportunityData"] = "New Opportunity is created.";
                     }
                     else
                     {
                         _opportunityService.UpdateOpportunity(opportunity);
-                        TempData["updateOpportunity"] = true.ToString();
+                        TempData["OpportunityStatus"] = true.ToString();
+                        TempData["OpportunityData"] = "Opportunity is Updated.";
                     }
                     return RedirectToAction("Opportunities", "Opportunity");
                 }
                 return View(opportunity);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw;
+                return BadRequest(ex.Message);
             }
         }
 
